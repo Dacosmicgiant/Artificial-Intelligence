@@ -58,7 +58,7 @@ X, y = make_classification(n_samples=1000, n_features=10, n_classes=2, random_st
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Create and train feedforward neural network
-mlp = MLPClassifier(hidden_layer_sizes=(10, 5), activation='relu', 
+mlp = MLPClassifier(hidden_layer_sizes=(10, 5), activation='relu',
                    solver='adam', max_iter=1000, random_state=42)
 mlp.fit(X_train, y_train)
 
@@ -127,8 +127,8 @@ The McCulloch-Pitts neuron is one of the earliest neural models, developed in 19
 The MP neuron computes the sum of its inputs and fires if the sum exceeds a threshold:
 
 y = {
-    1 if ∑(xᵢ) ≥ threshold
-    0 otherwise
+1 if ∑(xᵢ) ≥ threshold
+0 otherwise
 }
 
 ### 3.3 Python Implementation
@@ -139,11 +139,11 @@ import numpy as np
 class MPNeuron:
     def __init__(self, threshold):
         self.threshold = threshold
-        
+
     def activate(self, inputs):
         """Compute the output of the MP neuron"""
         return 1 if sum(inputs) >= self.threshold else 0
-    
+
     def predict(self, X):
         """Predict for multiple input samples"""
         return [self.activate(x) for x in X]
@@ -178,6 +178,7 @@ The Hebbian learning rule adjusts weights based on the correlation between input
 Δwᵢⱼ = η × xᵢ × yⱼ
 
 Where:
+
 - Δwᵢⱼ is the change in weight
 - η is the learning rate
 - xᵢ is the input
@@ -193,26 +194,26 @@ class HebbNet:
     def __init__(self, input_size, learning_rate=0.1):
         self.weights = np.zeros(input_size)
         self.learning_rate = learning_rate
-        
+
     def predict(self, x):
         """Calculate the output"""
         activation = np.dot(x, self.weights)
         return 1 if activation >= 0 else -1
-    
+
     def train(self, X, y, epochs=1):
         """Train the Hebbian network"""
         weight_history = [self.weights.copy()]
-        
+
         for _ in range(epochs):
             for i in range(len(X)):
                 x = X[i]
                 output = self.predict(x)
-                
+
                 # Apply Hebbian learning rule
                 delta_w = self.learning_rate * np.outer(x, output).flatten()
                 self.weights += delta_w
                 weight_history.append(self.weights.copy())
-                
+
         return weight_history
 
 # Example: Pattern association with Hebbian learning
@@ -237,7 +238,7 @@ plt.figure(figsize=(10, 6))
 weight_history = np.array(weight_history)
 for i in range(weight_history.shape[1]):
     plt.plot(weight_history[:, i], label=f'Weight {i+1}')
-    
+
 plt.title('Weight Changes During Hebbian Learning')
 plt.xlabel('Update Step')
 plt.ylabel('Weight Value')
@@ -280,48 +281,48 @@ class Perceptron:
         self.n_iterations = n_iterations
         self.weights = None
         self.bias = None
-        
+
     def activate(self, x):
         """Step function"""
         return 1 if x >= 0 else 0
-    
+
     def predict(self, X):
         """Generate predictions"""
         linear_output = np.dot(X, self.weights) + self.bias
         return np.array([self.activate(x) for x in linear_output])
-    
+
     def fit(self, X, y):
         """Train the perceptron"""
         n_samples, n_features = X.shape
-        
+
         # Initialize parameters
         self.weights = np.zeros(n_features)
         self.bias = 0
-        
+
         # Error history
         self.errors = []
-        
+
         # Learning
         for _ in range(self.n_iterations):
             errors = 0
-            
+
             for i in range(n_samples):
                 x_i = X[i]
                 y_i = y[i]
-                
+
                 # Predict
                 linear_output = np.dot(x_i, self.weights) + self.bias
                 y_pred = self.activate(linear_output)
-                
+
                 # Update weights if prediction is wrong
                 if y_i != y_pred:
                     update = self.lr * (y_i - y_pred)
                     self.weights += update * x_i
                     self.bias += update
                     errors += 1
-            
+
             self.errors.append(errors)
-            
+
             # Stop if converged
             if errors == 0:
                 break
@@ -378,6 +379,7 @@ For continuous output neurons, the weight update is:
 Δwᵢ = η(d - y)xᵢ
 
 Where:
+
 - η is the learning rate
 - d is the desired output
 - y is the actual output
@@ -395,50 +397,50 @@ class DeltaRuleNeuron:
         self.n_iterations = n_iterations
         self.weights = None
         self.bias = None
-        
+
     def activate(self, x):
         """Linear activation function"""
         return x
-    
+
     def predict(self, X):
         """Generate predictions"""
         linear_output = np.dot(X, self.weights) + self.bias
         return np.array([self.activate(x) for x in linear_output])
-    
+
     def fit(self, X, y):
         """Train using the delta rule"""
         n_samples, n_features = X.shape
-        
+
         # Initialize parameters
         self.weights = np.zeros(n_features)
         self.bias = 0
-        
+
         # Error history
         self.errors = []
-        
+
         # Learning
         for _ in range(self.n_iterations):
             total_error = 0
-            
+
             for i in range(n_samples):
                 x_i = X[i]
                 y_i = y[i]
-                
+
                 # Predict
                 y_pred = self.activate(np.dot(x_i, self.weights) + self.bias)
-                
+
                 # Calculate error
                 error = y_i - y_pred
                 total_error += error**2
-                
+
                 # Update weights using delta rule
                 self.weights += self.lr * error * x_i
                 self.bias += self.lr * error
-            
+
             # Record mean squared error
             mse = total_error / n_samples
             self.errors.append(mse)
-            
+
             # Convergence check
             if mse < 0.0001:
                 break
@@ -501,73 +503,73 @@ class NeuralNetwork:
         self.learning_rate = learning_rate
         self.weights = []
         self.biases = []
-        
+
         # Initialize weights and biases
         for i in range(len(layer_sizes) - 1):
             w = np.random.randn(layer_sizes[i], layer_sizes[i+1]) * 0.1
             b = np.zeros((1, layer_sizes[i+1]))
             self.weights.append(w)
             self.biases.append(b)
-    
+
     def sigmoid(self, x):
         """Sigmoid activation function"""
         return 1 / (1 + np.exp(-x))
-    
+
     def sigmoid_derivative(self, x):
         """Derivative of sigmoid function"""
         return x * (1 - x)
-    
+
     def forward(self, X):
         """Forward pass through the network"""
         self.activations = [X]
         self.z_values = []
-        
+
         for i in range(len(self.weights)):
             z = np.dot(self.activations[i], self.weights[i]) + self.biases[i]
             self.z_values.append(z)
             a = self.sigmoid(z)
             self.activations.append(a)
-            
+
         return self.activations[-1]
-    
+
     def backward(self, X, y):
         """Backward pass to update weights"""
         m = X.shape[0]
         output = self.activations[-1]
-        
+
         # Output layer error
         delta = (output - y) * self.sigmoid_derivative(output)
-        
+
         # Backpropagate the error
         for i in range(len(self.weights) - 1, -1, -1):
             # Update weights and biases
             self.weights[i] -= self.learning_rate * np.dot(self.activations[i].T, delta) / m
             self.biases[i] -= self.learning_rate * np.sum(delta, axis=0, keepdims=True) / m
-            
+
             # Compute error for previous layer (if not input layer)
             if i > 0:
                 delta = np.dot(delta, self.weights[i].T) * self.sigmoid_derivative(self.activations[i])
-    
+
     def train(self, X, y, epochs=1000):
         """Train the neural network"""
         losses = []
-        
+
         for epoch in range(epochs):
             # Forward pass
             output = self.forward(X)
-            
+
             # Compute loss
             loss = np.mean(np.square(output - y))
             losses.append(loss)
-            
+
             # Backward pass
             self.backward(X, y)
-            
+
             if epoch % 100 == 0:
                 print(f'Epoch {epoch}, Loss: {loss:.6f}')
-        
+
         return losses
-    
+
     def predict(self, X):
         """Generate predictions"""
         return self.forward(X)
@@ -649,49 +651,49 @@ class SOM:
         self.input_dim = input_dim
         self.learning_rate = learning_rate
         self.sigma = sigma if sigma is not None else max(x_dim, y_dim) / 2
-        
+
         # Initialize weights
         self.weights = np.random.rand(x_dim, y_dim, input_dim)
-        
+
         # Initialize grid coordinates
         self.grid = np.array([[[i, j] for j in range(y_dim)] for i in range(x_dim)])
-    
+
     def find_bmu(self, x):
         """Find the Best Matching Unit (BMU) for input x"""
         distances = np.sum((self.weights - x) ** 2, axis=2)
         return np.unravel_index(np.argmin(distances), distances.shape)
-    
+
     def update_weights(self, x, iteration, max_iterations):
         """Update weights based on input and current iteration"""
         # Find BMU
         bmu = self.find_bmu(x)
-        
+
         # Calculate decay parameters
         t = iteration / max_iterations
         lr = self.learning_rate * np.exp(-t)
         sigma = self.sigma * np.exp(-t)
-        
+
         # Calculate neighborhood function
         distances = np.sum((self.grid - np.array([bmu])) ** 2, axis=2)
         neighborhood = np.exp(-distances / (2 * sigma**2))
-        
+
         # Update weights
         for i in range(self.x_dim):
             for j in range(self.y_dim):
                 self.weights[i, j] += lr * neighborhood[i, j] * (x - self.weights[i, j])
-    
+
     def train(self, X, iterations=100):
         """Train the SOM"""
         for iter in range(iterations):
             if iter % 10 == 0:
                 print(f"Iteration {iter}/{iterations}")
-            
+
             # Pick a random sample
             x = X[np.random.randint(0, X.shape[0])]
-            
+
             # Update weights
             self.update_weights(x, iter, iterations)
-    
+
     def get_cluster_assignments(self, X):
         """Get cluster assignments for data points"""
         clusters = []
@@ -767,7 +769,7 @@ for i in range(som.x_dim):
             neighbors.append(som.weights[i, j-1])
         if j < som.y_dim - 1:
             neighbors.append(som.weights[i, j+1])
-        
+
         u_matrix[i, j] = np.mean([np.linalg.norm(som.weights[i, j] - neighbor) for neighbor in neighbors])
 
 plt.imshow(u_matrix, cmap='viridis', interpolation='none')
@@ -787,12 +789,14 @@ plt.show()
 ### 6.5 Advantages and Disadvantages
 
 **Advantages:**
+
 - Preserves topological relationships in the input data
 - Reduces dimensions while preserving important features
 - Works well with unlabeled data
 - Can detect clusters of arbitrary shapes
 
 **Disadvantages:**
+
 - Requires specifying grid dimensions in advance
 - Results depend on initialization and training parameters
 - Training can be computationally expensive
@@ -800,25 +804,14 @@ plt.show()
 
 ## 7. Comparative Analysis of Neural Models
 
-| Model | Year | Input Type | Learning Type | Applications | Key Features |
-|-------|------|------------|--------------|--------------|--------------|
-| MP Neuron | 1943 | Binary | None | Logic gates | First computational neuron model |
-| Hebb Network | 1949 | Real | Unsupervised | Pattern association | "Neurons that fire together, wire together" |
-| Perceptron | 1958 | Real | Supervised | Binary classification | Convergence guarantee for linearly separable data |
-| Delta Rule | 1960 | Real | Supervised | Regression, Classification | Minimizes squared error |
-| Backpropagation | 1986 | Real | Supervised | Various ML tasks | Allows training deep networks |
-| SOM | 1982 | Real | Unsupervised | Clustering, Visualization |
-
-## 7. Comparative Analysis of Neural Models (Continued)
-
-| Model | Year | Input Type | Learning Type | Applications | Key Features |
-|-------|------|------------|--------------|--------------|--------------|
-| MP Neuron | 1943 | Binary | None | Logic gates | First computational neuron model |
-| Hebb Network | 1949 | Real | Unsupervised | Pattern association | "Neurons that fire together, wire together" |
-| Perceptron | 1958 | Real | Supervised | Binary classification | Convergence guarantee for linearly separable data |
-| Delta Rule | 1960 | Real | Supervised | Regression, Classification | Minimizes squared error |
-| Backpropagation | 1986 | Real | Supervised | Various ML tasks | Allows training deep networks |
-| SOM | 1982 | Real | Unsupervised | Clustering, Visualization | Topology-preserving mapping |
+| Model           | Year | Input Type | Learning Type | Applications               | Key Features                                      |
+| --------------- | ---- | ---------- | ------------- | -------------------------- | ------------------------------------------------- |
+| MP Neuron       | 1943 | Binary     | None          | Logic gates                | First computational neuron model                  |
+| Hebb Network    | 1949 | Real       | Unsupervised  | Pattern association        | "Neurons that fire together, wire together"       |
+| Perceptron      | 1958 | Real       | Supervised    | Binary classification      | Convergence guarantee for linearly separable data |
+| Delta Rule      | 1960 | Real       | Supervised    | Regression, Classification | Minimizes squared error                           |
+| Backpropagation | 1986 | Real       | Supervised    | Various ML tasks           | Allows training deep networks                     |
+| SOM             | 1982 | Real       | Unsupervised  | Clustering, Visualization  | Topology-preserving mapping                       |
 
 ## 8. Advanced Neural Network Concepts
 
@@ -829,19 +822,23 @@ Activation functions introduce non-linearity into neural networks, enabling them
 #### 8.1.1 Common Activation Functions
 
 1. **Sigmoid**: σ(x) = 1/(1 + e^(-x))
+
    - Outputs between 0 and 1
    - Historically popular but suffers from vanishing gradient problem
 
 2. **Hyperbolic Tangent (tanh)**: tanh(x) = (e^x - e^(-x))/(e^x + e^(-x))
+
    - Outputs between -1 and 1
    - Zero-centered but still has vanishing gradient issues
 
 3. **Rectified Linear Unit (ReLU)**: f(x) = max(0, x)
+
    - Simple and computationally efficient
    - Helps mitigate vanishing gradient problem
    - Can suffer from "dying ReLU" problem (neurons permanently deactivated)
 
 4. **Leaky ReLU**: f(x) = max(αx, x) where α is a small constant
+
    - Addresses the dying ReLU problem
 
 5. **Softmax**: Used for multi-class classification in the output layer
@@ -903,14 +900,17 @@ Regularization methods help prevent overfitting by constraining the model's comp
 #### 8.2.1 Common Regularization Methods
 
 1. **L1 Regularization (Lasso)**
+
    - Adds |w| term to the loss function
    - Encourages sparse weight matrices by driving some weights to zero
 
 2. **L2 Regularization (Ridge)**
+
    - Adds ||w||² term to the loss function
    - Discourages large weights
 
 3. **Dropout**
+
    - Randomly deactivates neurons during training
    - Forces the network to learn redundant representations
 
@@ -930,33 +930,33 @@ class NeuralNetworkWithDropout:
         self.dropout_rate = dropout_rate
         self.weights = []
         self.biases = []
-        
+
         # Initialize weights and biases
         for i in range(len(layer_sizes) - 1):
             w = np.random.randn(layer_sizes[i], layer_sizes[i+1]) * 0.1
             b = np.zeros((1, layer_sizes[i+1]))
             self.weights.append(w)
             self.biases.append(b)
-    
+
     def sigmoid(self, x):
         """Sigmoid activation function"""
         return 1 / (1 + np.exp(-x))
-    
+
     def sigmoid_derivative(self, x):
         """Derivative of sigmoid function"""
         return x * (1 - x)
-    
+
     def forward(self, X, is_training=True):
         """Forward pass through the network with dropout"""
         self.activations = [X]
         self.z_values = []
         self.dropout_masks = []
-        
+
         for i in range(len(self.weights)):
             z = np.dot(self.activations[i], self.weights[i]) + self.biases[i]
             self.z_values.append(z)
             a = self.sigmoid(z)
-            
+
             # Apply dropout during training
             if is_training and i < len(self.weights) - 1:  # No dropout on output layer
                 dropout_mask = np.random.binomial(1, 1 - self.dropout_rate, size=a.shape) / (1 - self.dropout_rate)
@@ -964,64 +964,64 @@ class NeuralNetworkWithDropout:
                 a *= dropout_mask
             else:
                 self.dropout_masks.append(None)
-                
+
             self.activations.append(a)
-            
+
         return self.activations[-1]
-    
+
     def backward(self, X, y):
         """Backward pass to update weights"""
         m = X.shape[0]
         output = self.activations[-1]
-        
+
         # Output layer error
         delta = (output - y) * self.sigmoid_derivative(output)
-        
+
         # Backpropagate the error
         for i in range(len(self.weights) - 1, -1, -1):
             # Update weights and biases
             self.weights[i] -= self.learning_rate * np.dot(self.activations[i].T, delta) / m
             self.biases[i] -= self.learning_rate * np.sum(delta, axis=0, keepdims=True) / m
-            
+
             # Compute error for previous layer (if not input layer)
             if i > 0:
                 delta = np.dot(delta, self.weights[i].T) * self.sigmoid_derivative(self.activations[i])
                 # Apply dropout mask
                 if self.dropout_masks[i-1] is not None:
                     delta *= self.dropout_masks[i-1]
-    
+
     def train(self, X, y, epochs=1000, batch_size=32):
         """Train the neural network with mini-batch gradient descent"""
         n_samples = X.shape[0]
         losses = []
-        
+
         for epoch in range(epochs):
             # Shuffle data
             indices = np.random.permutation(n_samples)
             X_shuffled = X[indices]
             y_shuffled = y[indices]
-            
+
             # Mini-batch training
             for i in range(0, n_samples, batch_size):
                 X_batch = X_shuffled[i:i+batch_size]
                 y_batch = y_shuffled[i:i+batch_size]
-                
+
                 # Forward pass (with dropout)
                 output = self.forward(X_batch, is_training=True)
-                
+
                 # Backward pass
                 self.backward(X_batch, y_batch)
-            
+
             # Compute loss on full dataset (without dropout)
             output = self.forward(X, is_training=False)
             loss = np.mean(np.square(output - y))
             losses.append(loss)
-            
+
             if epoch % 100 == 0:
                 print(f'Epoch {epoch}, Loss: {loss:.6f}')
-        
+
         return losses
-    
+
     def predict(self, X):
         """Generate predictions (without dropout)"""
         return self.forward(X, is_training=False)
@@ -1034,13 +1034,16 @@ Proper weight initialization is crucial for training deep neural networks effect
 #### 8.3.1 Common Initialization Methods
 
 1. **Zeros or Constant Initialization**
+
    - Not recommended as it makes neurons learn the same features
 
 2. **Random Initialization**
+
    - Basic approach that breaks symmetry
    - May lead to vanishing/exploding gradients
 
 3. **Xavier/Glorot Initialization**
+
    - Designed for sigmoid/tanh activations
    - Weights ~ N(0, 2/(n_in + n_out))
 
@@ -1056,30 +1059,30 @@ import numpy as np
 def initialize_weights(method, layer_sizes):
     """Initialize weights using different strategies"""
     weights = []
-    
+
     for i in range(len(layer_sizes) - 1):
         n_in = layer_sizes[i]
         n_out = layer_sizes[i+1]
-        
+
         if method == "zeros":
             w = np.zeros((n_in, n_out))
-        
+
         elif method == "random":
             w = np.random.randn(n_in, n_out) * 0.01
-        
+
         elif method == "xavier":
             limit = np.sqrt(6 / (n_in + n_out))
             w = np.random.uniform(-limit, limit, (n_in, n_out))
-        
+
         elif method == "he":
             std = np.sqrt(2 / n_in)
             w = np.random.randn(n_in, n_out) * std
-        
+
         else:
             raise ValueError(f"Unknown initialization method: {method}")
-        
+
         weights.append(w)
-    
+
     return weights
 
 # Example usage
@@ -1124,7 +1127,7 @@ class NeuralNetwork:
     def __init__(self, layer_sizes, activations, weight_init="he"):
         """
         Initialize neural network
-        
+
         Parameters:
         - layer_sizes: List of neurons in each layer (input, hidden, output)
         - activations: List of activation functions for each layer
@@ -1133,15 +1136,15 @@ class NeuralNetwork:
         self.layer_sizes = layer_sizes
         self.num_layers = len(layer_sizes)
         self.activations = activations
-        
+
         # Initialize weights and biases
         self.weights = []
         self.biases = []
-        
+
         for i in range(self.num_layers - 1):
             n_in = layer_sizes[i]
             n_out = layer_sizes[i+1]
-            
+
             # Weight initialization
             if weight_init == "xavier":
                 limit = np.sqrt(6 / (n_in + n_out))
@@ -1151,32 +1154,32 @@ class NeuralNetwork:
                 w = np.random.randn(n_in, n_out) * std
             else:
                 w = np.random.randn(n_in, n_out) * 0.01
-                
+
             b = np.zeros((1, n_out))
             self.weights.append(w)
             self.biases.append(b)
-    
+
     def sigmoid(self, x):
         """Sigmoid activation function"""
         return 1 / (1 + np.exp(-np.clip(x, -500, 500)))  # Clip to avoid overflow
-    
+
     def sigmoid_derivative(self, x):
         """Derivative of sigmoid function"""
         return x * (1 - x)
-    
+
     def relu(self, x):
         """ReLU activation function"""
         return np.maximum(0, x)
-    
+
     def relu_derivative(self, x):
         """Derivative of ReLU function"""
         return np.where(x > 0, 1, 0)
-    
+
     def softmax(self, x):
         """Softmax activation function"""
         exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))  # Subtract max for numerical stability
         return exp_x / np.sum(exp_x, axis=1, keepdims=True)
-    
+
     def activate(self, x, activation):
         """Apply activation function"""
         if activation == "sigmoid":
@@ -1189,7 +1192,7 @@ class NeuralNetwork:
             return x
         else:
             raise ValueError(f"Unknown activation function: {activation}")
-    
+
     def activate_derivative(self, x, activation):
         """Apply derivative of activation function"""
         if activation == "sigmoid":
@@ -1200,118 +1203,118 @@ class NeuralNetwork:
             return 1  # Handled differently in backpropagation
         else:
             raise ValueError(f"Unknown activation function: {activation}")
-    
+
     def one_hot_encode(self, y, num_classes):
         """Convert class labels to one-hot encoding"""
         return np.eye(num_classes)[y]
-    
+
     def forward(self, X):
         """Forward pass through the network"""
         self.z_values = []
         self.a_values = [X]  # Input layer activation
-        
+
         # Propagate through hidden layers
         for i in range(self.num_layers - 1):
             z = np.dot(self.a_values[i], self.weights[i]) + self.biases[i]
             self.z_values.append(z)
-            
+
             a = self.activate(z, self.activations[i])
             self.a_values.append(a)
-            
+
         return self.a_values[-1]  # Output layer activation
-    
+
     def backward(self, X, y, learning_rate=0.01, reg_lambda=0.01):
         """Backward pass to update weights using gradient descent with L2 regularization"""
         m = X.shape[0]  # Number of samples
-        
+
         # Convert to one-hot if needed
         if len(y.shape) == 1:
             y = self.one_hot_encode(y, self.layer_sizes[-1])
-        
+
         # Backpropagation
         deltas = [None] * (self.num_layers - 1)
-        
+
         # Output layer error (special case for softmax + cross-entropy)
         if self.activations[-1] == "softmax":
             deltas[-1] = self.a_values[-1] - y
         else:
             deltas[-1] = (self.a_values[-1] - y) * self.activate_derivative(self.a_values[-1], self.activations[-1])
-        
+
         # Hidden layers error
         for l in range(self.num_layers - 2, 0, -1):
             deltas[l-1] = np.dot(deltas[l], self.weights[l].T) * self.activate_derivative(self.a_values[l], self.activations[l-1])
-        
+
         # Update weights and biases
         for l in range(self.num_layers - 2, -1, -1):
             # L2 regularization term
             reg_term = reg_lambda * self.weights[l]
-            
+
             # Weight update
             self.weights[l] -= learning_rate * (np.dot(self.a_values[l].T, deltas[l]) / m + reg_term)
-            
+
             # Bias update (no regularization for bias)
             self.biases[l] -= learning_rate * np.sum(deltas[l], axis=0, keepdims=True) / m
-    
+
     def compute_loss(self, y_true, y_pred, reg_lambda=0.01):
         """Compute loss with L2 regularization"""
         m = y_true.shape[0]
-        
+
         # Convert to one-hot if needed
         if len(y_true.shape) == 1:
             y_true = self.one_hot_encode(y_true, self.layer_sizes[-1])
-        
+
         # Cross-entropy loss
         epsilon = 1e-15  # Small constant to avoid log(0)
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
         cross_entropy = -np.sum(y_true * np.log(y_pred)) / m
-        
+
         # L2 regularization term
         l2_reg = 0
         for w in self.weights:
             l2_reg += np.sum(np.square(w))
         l2_reg *= reg_lambda / (2 * m)
-        
+
         return cross_entropy + l2_reg
-    
-    def train(self, X, y, X_val=None, y_val=None, epochs=100, batch_size=32, 
+
+    def train(self, X, y, X_val=None, y_val=None, epochs=100, batch_size=32,
               learning_rate=0.01, reg_lambda=0.01, early_stopping=True, patience=10):
         """Train the neural network using mini-batch gradient descent"""
         m = X.shape[0]
         train_losses = []
         val_losses = []
-        
+
         # For early stopping
         best_val_loss = float('inf')
         wait = 0
-        
+
         for epoch in range(epochs):
             # Shuffle data
             indices = np.random.permutation(m)
             X_shuffled = X[indices]
             y_shuffled = y[indices]
-            
+
             # Mini-batch training
             for i in range(0, m, batch_size):
                 X_batch = X_shuffled[i:i+batch_size]
                 y_batch = y_shuffled[i:i+batch_size]
-                
+
                 # Forward pass
                 y_pred = self.forward(X_batch)
-                
+
                 # Backward pass
                 self.backward(X_batch, y_batch, learning_rate, reg_lambda)
-            
+
             # Compute training loss
             y_pred_train = self.forward(X)
             train_loss = self.compute_loss(y, y_pred_train, reg_lambda)
             train_losses.append(train_loss)
-            
+
             # Compute validation loss if provided
             if X_val is not None and y_val is not None:
                 y_pred_val = self.forward(X_val)
                 val_loss = self.compute_loss(y_val, y_pred_val, reg_lambda)
                 val_losses.append(val_loss)
-                
+
                 # Early stopping
                 if early_stopping:
                     if val_loss < best_val_loss:
@@ -1319,31 +1322,31 @@ class NeuralNetwork:
                         wait = 0
                     else:
                         wait += 1
-                    
+
                     if wait >= patience:
                         print(f"Early stopping at epoch {epoch}")
                         break
-            
+
             # Print progress
             if epoch % 10 == 0:
                 if X_val is not None:
                     print(f"Epoch {epoch}, Train Loss: {train_loss:.6f}, Val Loss: {val_loss:.6f}")
                 else:
                     print(f"Epoch {epoch}, Train Loss: {train_loss:.6f}")
-        
+
         return {"train_loss": train_losses, "val_loss": val_losses}
-    
+
     def predict(self, X):
         """Generate class predictions"""
         y_prob = self.forward(X)
         return np.argmax(y_prob, axis=1)
-    
+
     def evaluate(self, X, y):
         """Evaluate the model performance"""
         y_pred = self.predict(X)
         accuracy = accuracy_score(y, y_pred)
         conf_matrix = confusion_matrix(y, y_pred)
-        
+
         return {
             "accuracy": accuracy,
             "confusion_matrix": conf_matrix
@@ -1429,14 +1432,17 @@ plt.show()
 ### 10.1 Key Application Areas
 
 1. **Computer Vision**
+
    - Image classification, object detection, segmentation
    - Face recognition, medical image analysis
 
 2. **Natural Language Processing**
+
    - Text classification, sentiment analysis
    - Machine translation, chatbots
 
 3. **Time Series Analysis**
+
    - Stock price prediction, weather forecasting
    - Anomaly detection
 
@@ -1447,15 +1453,19 @@ plt.show()
 ### 10.2 Future Directions
 
 1. **Energy-Efficient Neural Networks**
+
    - Reducing the computational and energy requirements
 
 2. **Neuromorphic Computing**
+
    - Hardware designs inspired by the brain's architecture
 
 3. **Explainable AI**
+
    - Making neural network decisions more interpretable
 
 4. **Neuro-Symbolic AI**
+
    - Combining neural networks with symbolic reasoning
 
 5. **Continual Learning**
